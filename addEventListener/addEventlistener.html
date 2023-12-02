@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        class Publisher {
+            _triggerEvent(eventName) {
+                let array = [];
+
+                array = this._listeners[eventName];
+                if (!!array) {
+                    array.forEach(function (callback) {
+                        callback();
+                    });
+                }
+            }
+            addEventListener(eventName, listener) {
+                if (!this._listeners) {
+                    this._listeners = {};
+                }
+                if (!this._listeners[eventName]) {
+                    this._listeners[eventName] = [];
+                }
+                this._listeners[eventName].push(listener);
+
+            }
+        }
+        class Car extends Publisher {
+            constructor() {
+                super();
+                this.speed = 0;
+                this._listeners = {};
+            }
+
+            start() {
+                this.speed = 100;
+                this._triggerEvent('start');
+
+                setTimeout(() => {
+                    this._triggerEvent('speedoverflow');
+                }, 2000);
+                setTimeout(this._stop.bind(this), 5000);
+            }
+            _stop() {
+                this.speed = 0;
+                this._triggerEvent('stop');
+
+            }
+
+
+
+        }
+
+        class TurboCar extends Car {
+            _stop() {
+                console.log('i am never stop');
+            }
+        }
+
+
+        class Dog extends Publisher {
+            constructor() {
+                super();
+                run(() => {
+                    this._triggerEvent('run');
+                })
+            }
+        }
+
+        class Cat extends Publisher {
+            constructor() {
+                super();
+                setTimeout(() => {
+                    this._triggerEvent('eat');
+
+                }, 2000)
+            }
+        }
+
+        let dog = new Dog;
+        let cat = new Cat;
+        cat.addEventListener('eat', () => {
+            alert('want eat');
+        })
+        dog.addEventListener('run', () => {
+            alert('the dog is runing now');
+        })
+        let mers = new Car;
+        // let mers = new TurboCar;
+        mers.addEventListener('stop', () => {
+            alert('I am Dima and i know the car is stopped');
+            console.log(mers.speed);
+        });
+        mers.addEventListener('stop', () => {
+            alert('I am Dima and i know the car is stopped');
+            console.log(mers.speed);
+        });
+        mers.addEventListener('start', () => {
+            alert('Car started');
+            console.log(mers.speed);
+        });
+        mers.addEventListener('speedoverflow', () => {
+            alert('speed overflow');
+            console.log(mers.speed);
+        });
+
+
+        mers.start();
+    </script>
+</body>
+
+</html>
